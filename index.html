@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Faker's Player Stats Checker</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Faker's Player Stats Checker</h1>
+    <div id="watermark">Not affiliated with Hypixel</div>
+    <h2>Enter your API key and player name:</h2>
+    <input type="text" id="api-key" placeholder="API Key" /><br />
+    <input type="text" id="player-name" placeholder="Player Name" /><br />
+    <button onclick="fetchPlayerStats()">Fetch Stats</button>
+
+    <div id="stats-container" style="display: none;">
+        <h2>Bedwars Stats:</h2>
+        <p>Wins: <span id="bedwars-wins"></span></p>
+        <p>Losses: <span id="bedwars-losses"></span></p>
+        <p>Kills: <span id="bedwars-kills"></span></p>
+        <p>Stars: <span id="bedwars-stars"></span></p>
+        
+        <h2>Skywars Stats:</h2>
+        <p>Wins: <span id="skywars-wins"></span></p>
+        <p>Losses: <span id="skywars-losses"></span></p>
+        <p>Kills: <span id="skywars-kills"></span></p>
+        <p>Stars: <span id="skywars-stars"></span></p>
+        
+        <h2>Duels Stats:</h2>
+        <p>Wins: <span id="duels-wins"></span></p>
+        <p>Losses: <span id="duels-losses"></span></p>
+        <p>Kills: <span id="duels-kills"></span></p>
+        <p>Title: <span id="duels-title"></span></p>
+    </div>
+
+    <script>
+        function fetchPlayerStats() {
+            const apiKey = document.getElementById("api-key").value;
+            const playerName = document.getElementById("player-name").value;
+
+            if (!apiKey || !playerName) {
+                console.log("Please provide both API key and player name.");
+                return;
+            }
+
+            fetch(`https://api.hypixel.net/player?key=${apiKey}&name=${playerName}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const player = data.player;
+
+                        // Bedwars Stats
+                        const bedwars = player.stats.Bedwars;
+                        document.getElementById("bedwars-wins").textContent = bedwars.wins_bedwars;
+                        document.getElementById("bedwars-losses").textContent = bedwars.losses_bedwars;
+                        document.getElementById("bedwars-kills").textContent = bedwars.kills_bedwars;
+                        document.getElementById("bedwars-stars").textContent = (bedwars.stars || 'N/A');
+
+                        // Skywars Stats
+                        const skywars = player.stats.SkyWars;
+                        document.getElementById("skywars-wins").textContent = skywars.wins;
+                        document.getElementById("skywars-losses").textContent = skywars.losses;
+                        document.getElementById("skywars-kills").textContent = skywars.kills;
+                        document.getElementById("skywars-stars").textContent = (skywars.stars || 'N/A');
+
+                        // Duels Stats
+                        const duels = player.stats.Duels;
+                        document.getElementById("duels-wins").textContent = duels.wins;
+                        document.getElementById("duels-losses").textContent = duels.losses;
+                        document.getElementById("duels-kills").textContent = duels.kills;
+                        document.getElementById("duels-title").textContent = (duels.title || 'N/A');
+
+                        // Display the stats container
+                        document.getElementById("stats-container").style.display = "block";
+                    } else {
+                        console.log("Failed to fetch player stats.");
+                    }
+                })
+                .catch(error => {
+                    console.log("An error occurred:", error);
+                });
+        }
+    </script>
+</body>
+</html>
